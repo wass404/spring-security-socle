@@ -20,7 +20,14 @@ import java.util.Map;
 public class JWTAuthorizationFilter extends OncePerRequestFilter{
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-    String jwt = request.getHeader(SecurityConstants.HEADER_STRING);
+        response.addHeader("Access-Control-Allow-Origin", "*");// les domaines autorisés pour régler CORS si on a un domaine précis on le mets sinon on autorise tout avec *
+        response.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Contol-Request-Headers,authorization");// l'autorisation d'envoyer les headers(les headers autorisées du partie front
+        response.addHeader("Access-Control-Expose-Headers", "Access-Controle-Allow-Origin, Access-Controle-Allow-Credentials, authorization"); // le droit de lire les headers indiqués
+        if (request.getMethod().equals("OPTIONS")) {
+            response.setStatus(HttpServletResponse.SC_OK);
+        }
+        ///////////////////////////////////////////////////////////
+        String jwt = request.getHeader(SecurityConstants.HEADER_STRING);
     if(jwt == null || !jwt.startsWith(SecurityConstants.TOCKEN_PREFIX)){
         // doFilter c'à dire passe au filtre suivant
         filterChain.doFilter(request,response);// je quite le filtre
